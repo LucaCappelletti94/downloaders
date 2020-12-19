@@ -1,0 +1,62 @@
+downloaders
+=========================================================================================
+|travis| |sonar_quality| |sonar_maintainability| |codacy|
+|code_climate_maintainability| |pip| |downloads|
+
+Python package to handle download of multiple types of files.
+
+How do I install this package?
+----------------------------------------------
+As usual, just download it using pip:
+
+.. code:: shell
+
+    pip install downloaders
+
+Tests Coverage
+----------------------------------------------
+Since some software handling coverages sometimes
+get slightly different results, here's three of them:
+
+|coveralls| |sonar_coverage| |code_climate_coverage|
+
+Python package to handle download of multiple types of files.
+
+.. |travis| image:: https://travis-ci.org/LucaCappelletti94/downloaders.png
+   :target: https://travis-ci.org/LucaCappelletti94/downloaders
+   :alt: Travis CI build
+
+.. |sonar_quality| image:: https://sonarcloud.io/api/project_badges/measure?project=LucaCappelletti94_downloaders&metric=alert_status
+    :target: https://sonarcloud.io/dashboard/index/LucaCappelletti94_downloaders
+    :alt: SonarCloud Quality
+
+.. |sonar_maintainability| image:: https://sonarcloud.io/api/project_badges/measure?project=LucaCappelletti94_downloaders&metric=sqale_rating
+    :target: https://sonarcloud.io/dashboard/index/LucaCappelletti94_downloaders
+    :alt: SonarCloud Maintainability
+
+.. |sonar_coverage| image:: https://sonarcloud.io/api/project_badges/measure?project=LucaCappelletti94_downloaders&metric=coverage
+    :target: https://sonarcloud.io/dashboard/index/LucaCappelletti94_downloaders
+    :alt: SonarCloud Coverage
+
+.. |coveralls| image:: https://coveralls.io/repos/github/LucaCappelletti94/downloaders/badge.svg?branch=master
+    :target: https://coveralls.io/github/LucaCappelletti94/downloaders?branch=master
+    :alt: Coveralls Coverage
+
+.. |pip| image:: https://badge.fury.io/py/downloaders.svg
+    :target: https://badge.fury.io/py/downloaders
+    :alt: Pypi project
+
+.. |downloads| image:: https://pepy.tech/badge/downloaders
+    :target: https://pepy.tech/project/downloaders
+    :alt: Pypi total project downloads
+
+.. |codacy| 
+    :alt: Codacy Maintainability
+
+.. |code_climate_maintainability| image:: https://api.codeclimate.com/v1/badges/35fb30e0228dbd2a03cc/maintainability
+    :target: https://codeclimate.com/github/LucaCappelletti94/downloaders/maintainability
+    :alt: Maintainability
+
+.. |code_climate_coverage| image:: https://api.codeclimate.com/v1/badges/35fb30e0228dbd2a03cc/test_coverage
+    :target: https://codeclimate.com/github/LucaCappelletti94/downloaders/test_coverage
+    :alt: Code Climate Coverage
