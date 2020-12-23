@@ -1,9 +1,9 @@
 downloaders
 =========================================================================================
-|travis| |sonar_quality| |sonar_maintainability| |codacy|
+|travis| |sonar_quality| |sonar_maintainability|
 |code_climate_maintainability| |pip| |downloads|
 
-Python package to handle download of multiple types of files.
+Python package to handle the download of multiple types of files.
 
 How do I install this package?
 ----------------------------------------------
@@ -20,7 +20,7 @@ get slightly different results, here's three of them:
 
 |coveralls| |sonar_coverage| |code_climate_coverage|
 
-Python package to handle download of multiple types of files.
+Python package to handle the download of multiple types of files.
 
 .. |travis| image:: https://travis-ci.org/LucaCappelletti94/downloaders.png
    :target: https://travis-ci.org/LucaCappelletti94/downloaders
