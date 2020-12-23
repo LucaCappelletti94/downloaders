@@ -8,3 +8,5 @@
 __pycache__
 __pycache__
 coverage.xml
+.pytest_cache
+.ipynb_checkpoints
