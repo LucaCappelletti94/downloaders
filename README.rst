@@ -13,6 +13,17 @@ As usual, just download it using pip:
 
     pip install downloaders
 
+Usage examples
+----------------------------------------------
+
+.. code:: python
+
+    from downloaders import BaseDownloader
+
+    downloader = BaseDownloader()
+    urls = [...]
+    downloader.download(urls)
+
 Tests Coverage
 ----------------------------------------------
 Since some software handling coverages sometimes
