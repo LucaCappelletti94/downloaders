@@ -50,9 +50,6 @@ Python package to handle the download of multiple types of files.
     :target: https://pepy.tech/project/downloaders
     :alt: Pypi total project downloads
 
-.. |codacy| 
-    :alt: Codacy Maintainability
-
 .. |code_climate_maintainability| image:: https://api.codeclimate.com/v1/badges/35fb30e0228dbd2a03cc/maintainability
     :target: https://codeclimate.com/github/LucaCappelletti94/downloaders/maintainability
     :alt: Maintainability
