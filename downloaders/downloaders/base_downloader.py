@@ -1,7 +1,6 @@
 from typing import Union, List, Dict
 import requests
 from tqdm.auto import tqdm
-from dict_hash import sha256
 from multiprocessing import Pool, cpu_count
 import os
 import pandas as pd
