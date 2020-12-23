@@ -1,5 +1,6 @@
-import tarfile
 import lzma
+import os
+import tarfile
 
 
 def is_gzip(source: str) -> bool:
@@ -14,6 +15,10 @@ def is_gzip(source: str) -> bool:
     --------------------
     Boolean value representing if the is a gzip.
     """
+    if not os.path.exists(source):
+        return False
+    if source.endswith(".gz"):
+        return True
     with open(source, 'rb') as f:
         return f.read(2) == b'\x1f\x8b'
 
@@ -30,6 +35,10 @@ def is_xz(source: str) -> bool:
     --------------------
     Boolean value representing if the is a xz.
     """
+    if not os.path.exists(source):
+        return False
+    if source.endswith(".xz"):
+        return True
     with lzma.open(source, 'r') as f:
         try:
             f.read(1)
@@ -50,19 +59,8 @@ def is_targz(source: str) -> bool:
     --------------------
     Boolean value representing if the file is a targz.
     """
+    if not os.path.exists(source):
+        return False
+    if source.endswith(".tar.gz"):
+        return True
     return tarfile.is_tarfile(source) and is_gzip(source)
-
-
-def is_tar(source: str) -> bool:
-    """Return wether the given file is a tarball.
-
-    Parameters
-    --------------------
-    source: str,
-        The source path to test if it can be extracted.
-
-    Returns
-    --------------------
-    Boolean value representing if the file is a tarball.
-    """
-    return tarfile.is_tarfile(source) and not is_gzip(source)

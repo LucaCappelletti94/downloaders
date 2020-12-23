@@ -21,7 +21,7 @@ class BaseDownloader:
         cache: bool = True,
         target_directory: str = "downloads",
         description_pattern="Downloading to {}",
-        crash_early: bool = True,
+        crash_early: bool = False,
         verbose: int = 1
     ):
         """Create new BaseDownloader.
@@ -35,6 +35,8 @@ class BaseDownloader:
             The dimension of the block size to download in stream.
         auto_extract: bool = False,
             Wether to automatically extract the encountered files.
+        delete_original_after_extraction: bool = True,
+            Wether to delete the downloaded file after extraction.
         max_description_size: int = 50,
             Maximum length of the description in the loading bar.
         cache: bool = True,
@@ -42,9 +44,13 @@ class BaseDownloader:
         target_directory: str = "downloads",
             Position where to store the downloaded files.
         description_pattern="Downloading to {}",
-        crash_early: bool = True,
+            Pattern to use for the loading bar description.
+        crash_early: bool = False,
+            Wether if the download should stop at the earliest crash.
         verbose: int = 1
-
+            The level of verbosity.
+            With level 1, the overall loading bar is showed.
+            With level 2, also the download of each element is showed.
         """
         if not isinstance(process_number, int) or process_number == 0:
             raise ValueError(
@@ -73,6 +79,7 @@ class BaseDownloader:
         file_name = request.headers.get('content-disposition', None)
         if file_name is None:
             file_name = url.split("/")[-1]
+            file_name = file_name.split("?")[0]
         return os.path.join(
             self._target_directory,
             file_name
@@ -111,8 +118,10 @@ class BaseDownloader:
         """Return boolean representing if given path is cached."""
         if not self._cache:
             return False
-        return os.path.exists(destination) or self._auto_extract.is_cached(
-            self._auto_extract.destination_path(destination)
+        if not os.path.exists(destination):
+            return False
+        return self._extractor.can_extract(destination) and self._extractor.is_cached(
+            self._extractor.destination_path(destination)
         )
 
     def _download(self, url: str, destination: str = None) -> Dict:
@@ -137,6 +146,7 @@ class BaseDownloader:
         """
         status_code = None
         file_size = None
+        bar = None
         success = False
         cached = False
         exception = ""
@@ -203,8 +213,8 @@ class BaseDownloader:
                     downloaded_file_size = file_size
                     # The file has been loaded from the cache.
                     cached = True
-                if self._auto_extract and self._auto_extract.can_extract(destination):
-                    extration_metadata = self._auto_extract.extract(
+                if self._auto_extract and self._extractor.can_extract(destination):
+                    extration_metadata = self._extractor.extract(
                         destination
                     )
             # If something fails, we remove the failed download.
@@ -240,7 +250,7 @@ class BaseDownloader:
             }
         }
 
-    def _download_wrapper(self, **kwargs: Dict) -> Dict:
+    def _download_wrapper(self, kwargs: Dict) -> Dict:
         """Method to wrap keywords call to _download method."""
         return self._download(**kwargs)
 
@@ -263,12 +273,16 @@ class BaseDownloader:
         ----------------------
         ValueError,
             If the request has not a status code 200 (success).
+
+        Returns
+        ----------------------
+        Dataframe with report on the operations executed.
         """
         if not isinstance(urls, list):
             urls = [urls]
         if paths is not None and not isinstance(paths, list):
             paths = [paths]
-        if isinstance(urls, list) and isinstance(paths, list) and len(urls) == len(paths):
+        if isinstance(urls, list) and isinstance(paths, list) and len(urls) != len(paths):
             raise ValueError(
                 "The urls and paths lists must have the same length."
             )
@@ -281,10 +295,10 @@ class BaseDownloader:
                 p.imap(
                     self._download_wrapper,
                     (
-                        {
-                            "url": urls[i],
-                            "path": None if paths is None else paths[i]
-                        }
+                        dict(
+                            url=urls[i],
+                            destination=None if paths is None else paths[i]
+                        )
                         for i in range(len(urls))
                     )
                 ),

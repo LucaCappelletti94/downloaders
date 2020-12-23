@@ -122,7 +122,7 @@ class BaseExtractor:
         else:
             cached = True
             success = True
-            
+
         return {
             "file_size": os.path.getsize(destination),
             "destination": destination,

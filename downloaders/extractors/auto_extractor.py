@@ -1,7 +1,7 @@
+from typing import Dict
 from .base_extractor import BaseExtractor
 from .gzip_extractor import GzipExtractor
 from .targz_extractor import TargzExtractor
-from .tar_extractor import TarExtractor
 from .xz_extractor import XzExtractor
 from .zip_extraction import ZipExtractor
 
@@ -37,8 +37,7 @@ class AutoExtractor(BaseExtractor):
                 GzipExtractor,
                 TargzExtractor,
                 XzExtractor,
-                ZipExtractor,
-                TarExtractor
+                ZipExtractor
             )
         ]
 
@@ -91,7 +90,7 @@ class AutoExtractor(BaseExtractor):
         self,
         source: str,
         destination: str = None
-    ):
+    ) -> Dict:
         """Extract the given source file to the given destination.
 
         Parameters
@@ -101,7 +100,7 @@ class AutoExtractor(BaseExtractor):
         destination: str = None,
             The destination file to target.
         """
-        self.get_supported_extractor(source).extract(
+        return self.get_supported_extractor(source).extract(
             source,
             destination
         )
