@@ -46,8 +46,8 @@ setup(
     description="Python package to handle download of multiple types of files.",
     long_description=long_description,
     url="https://github.com/LucaCappelletti94/downloaders",
-    author="cappelletti.luca94@gmail.com",
-    author_email="LucaCappelletti94",
+    author="LucaCappelletti94",
+    author_email="cappelletti.luca94@gmail.com",
     # Choose your license
     license='MIT',
     include_package_data=True,
