@@ -117,9 +117,7 @@ class BaseDownloader:
         """Return boolean representing if given path is cached."""
         if not self._cache:
             return False
-        if not os.path.exists(destination):
-            return False
-        return self._extractor.can_extract(destination) and self._extractor.is_cached(
+        return os.path.exists(destination) or self._extractor.can_extract(destination) and self._extractor.is_cached(
             self._extractor.destination_path(destination)
         )
 
@@ -303,7 +301,7 @@ class BaseDownloader:
                 ),
                 desc="Downloading files",
                 dynamic_ncols=True,
-                disable=self._verbose > 0,
+                disable=not self._verbose > 0,
                 leave=False
             ))
             # Clean up the pool
