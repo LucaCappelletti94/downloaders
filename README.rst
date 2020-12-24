@@ -31,7 +31,31 @@ get slightly different results, here's three of them:
 
 |coveralls| |sonar_coverage| |code_climate_coverage|
 
-Python package to handle the download of multiple types of files.
+Troubleshooting
+-----------------------------------------------
+
+MacOS multiprocessing nighmare fuel
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Cupertino has a gift for us: somehow multiprocessing on MacOS in some specific
+astral configurations that I have yet to fully understand, it will crash with the
+following error:
+
+.. code:: bash
+
+    The process has forked and you cannot use this CoreFoundation functionality safely. You MUST exec().
+    Break on __THE_PROCESS_HAS_FORKED_AND_YOU_CANNOT_USE_THIS_COREFOUNDATION_FUNCTIONALITY___YOU_MUST_EXEC__() to debug.
+
+Apparently, this can be easily fixed by changing the way multiprocessing spawns
+processes, that is:
+
+.. code:: python
+
+    import platform, multiprocessing
+
+    if platform.system() == "Darwin":
+        multiprocessing.set_start_method('spawn')
+
+The aforementioned solution was proposed on `this StackOverflow question <https://stackoverflow.com/questions/30669659/multiproccesing-and-error-the-process-has-forked-and-you-cannot-use-this-corefou>`__.
 
 .. |travis| image:: https://travis-ci.org/LucaCappelletti94/downloaders.png
    :target: https://travis-ci.org/LucaCappelletti94/downloaders
