@@ -34,7 +34,7 @@ get slightly different results, here's three of them:
 Troubleshooting
 -----------------------------------------------
 
-MacOS multiprocessing nighmare fuel
+MacOS multiprocessing nightmare fuel
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Cupertino has a gift for us: somehow multiprocessing on MacOS in some specific
 astral configurations that I have yet to fully understand, it will crash with the

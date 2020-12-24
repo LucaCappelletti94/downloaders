@@ -15,10 +15,10 @@ def is_gzip(source: str) -> bool:
     --------------------
     Boolean value representing if the is a gzip.
     """
-    if not os.path.exists(source):
-        return False
     if source.endswith(".gz"):
         return True
+    if not os.path.exists(source):
+        return False
     with open(source, 'rb') as f:
         return f.read(2) == b'\x1f\x8b'
 
@@ -35,10 +35,10 @@ def is_xz(source: str) -> bool:
     --------------------
     Boolean value representing if the is a xz.
     """
-    if not os.path.exists(source):
-        return False
     if source.endswith(".xz"):
         return True
+    if not os.path.exists(source):
+        return False
     with lzma.open(source, 'r') as f:
         try:
             f.read(1)
@@ -59,8 +59,8 @@ def is_targz(source: str) -> bool:
     --------------------
     Boolean value representing if the file is a targz.
     """
-    if not os.path.exists(source):
-        return False
     if source.endswith(".tar.gz"):
         return True
+    if not os.path.exists(source):
+        return False
     return tarfile.is_tarfile(source) and is_gzip(source)
