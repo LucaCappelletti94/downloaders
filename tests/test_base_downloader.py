@@ -27,5 +27,5 @@ def test_base_downloader():
             downloader.download(urls)
             downloader.download(urls[0])
             downloader.download(urls[0], os.path.join(root, "archive.tar"))
-            #if os.path.exists(root):
-            #    shutil.rmtree(root)
+            if os.path.exists(root):
+                shutil.rmtree(root)

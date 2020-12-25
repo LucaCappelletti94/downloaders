@@ -285,27 +285,36 @@ class BaseDownloader:
             )
         # Use the minimum amount of processes.
         process_number = min(len(urls), self._process_number)
-        # Start the process pool
-        with Pool(process_number) as p:
-            # Execute the downloads and compose the report document.
-            report = pd.DataFrame(tqdm(
-                p.imap(
-                    self._download_wrapper,
-                    (
-                        dict(
-                            url=urls[i],
-                            destination=None if paths is None else paths[i]
-                        )
-                        for i in range(len(urls))
-                    )
-                ),
-                desc="Downloading files",
-                dynamic_ncols=True,
-                disable=not self._verbose > 0,
-                leave=False
-            ))
-            # Clean up the pool
-            p.close()
-            p.join()
+        # Create the tasks generator
+        tasks = (
+            dict(
+                url=urls[i],
+                destination=None if paths is None else paths[i]
+            )
+            for i in range(len(urls))
+        )
+        # If only one process is required, we don't create a Pool
+        if process_number == 1:
+            report = pd.DataFrame([
+                self._download_wrapper(task)
+                for task in tasks
+            ])
+        else:
+            # Start the process pool
+            with Pool(process_number) as p:
+                # Execute the downloads and compose the report document.
+                report = pd.DataFrame(tqdm(
+                    p.imap(
+                        self._download_wrapper,
+                        tasks
+                    ),
+                    desc="Downloading files",
+                    dynamic_ncols=True,
+                    disable=not self._verbose > 0,
+                    leave=False
+                ))
+                # Clean up the pool
+                p.close()
+                p.join()
         # Return report
         return report
