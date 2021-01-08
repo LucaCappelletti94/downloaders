@@ -20,7 +20,7 @@ class BaseDownloader:
         cache: bool = True,
         target_directory: str = "downloads",
         description_pattern="Downloading to {}",
-        crash_early: bool = False,
+        crash_early: bool = True,
         verbose: int = 1
     ):
         """Create new BaseDownloader.
@@ -44,7 +44,7 @@ class BaseDownloader:
             Position where to store the downloaded files.
         description_pattern="Downloading to {}",
             Pattern to use for the loading bar description.
-        crash_early: bool = False,
+        crash_early: bool = True,
             Wether if the download should stop at the earliest crash.
         verbose: int = 1
             The level of verbosity.
@@ -305,6 +305,7 @@ class BaseDownloader:
                     desc=desc,
                     dynamic_ncols=True,
                     disable=not self._verbose > 0 or len(urls) == 1,
+                    total=len(urls),
                     leave=False
                 )
             ])
@@ -320,6 +321,7 @@ class BaseDownloader:
                     desc=desc,
                     dynamic_ncols=True,
                     disable=not self._verbose > 0,
+                    total=len(urls),
                     leave=False
                 ))
                 # Clean up the pool
