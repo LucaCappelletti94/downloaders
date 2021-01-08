@@ -212,6 +212,8 @@ class BaseDownloader:
                     downloaded_file_size = file_size
                     # The file has been loaded from the cache.
                     cached = True
+                    # Since it is cached it is definitely a success
+                    success = True
                 if self._auto_extract and self._extractor.can_extract(destination):
                     extration_metadata = self._extractor.extract(
                         destination
@@ -226,6 +228,8 @@ class BaseDownloader:
                 if bar is not None:
                     bar.close()
                 raise e
+        except KeyboardInterrupt as e:
+            raise e
         except Exception as e:
             # If the download has crashed and it is required to crash early
             # we raise the captured exception.

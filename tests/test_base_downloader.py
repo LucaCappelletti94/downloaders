@@ -10,7 +10,7 @@ def test_base_downloader():
         "https://github.com/LucaCappelletti94/downloaders/blob/main/tests/data/example.csv?raw=true",
         "https://github.com/LucaCappelletti94/downloaders/blob/main/tests/data/example.csv.gz?raw=true",
         "https://github.com/LucaCappelletti94/downloaders/blob/main/tests/data/example.csv.xz?raw=true",
-        "https://github.com/LucaCappelletti94/downloaders/blob/main/tests/data/example.csv.zip?raw=true",
+        "https://github.com/LucaCappelletti94/downloaders/blob/main/tests/data/data.zip?raw=true",
         "https://github.com/LucaCappelletti94/downloaders/blob/main/tests/data/test.tar.gz?raw=true",
     ]
     for cache in (True, False):

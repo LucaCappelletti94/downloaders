@@ -99,6 +99,10 @@ class AutoExtractor(BaseExtractor):
             The source file to extract.
         destination: str = None,
             The destination file to target.
+
+        Returns
+        -------------------
+        Dictionary with metadata.
         """
         return self.get_supported_extractor(source).extract(
             source,
