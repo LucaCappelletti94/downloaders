@@ -5,6 +5,7 @@ from multiprocessing import Pool, cpu_count
 import os
 import pandas as pd
 from ..extractors import AutoExtractor
+from ..utils import is_iterable
 
 
 class BaseDownloader:
@@ -20,7 +21,7 @@ class BaseDownloader:
         cache: bool = True,
         target_directory: str = "downloads",
         description_pattern="Downloading to {}",
-        crash_early: bool = True,
+        crash_early: bool = False,
         verbose: int = 1
     ):
         """Create new BaseDownloader.
@@ -44,7 +45,7 @@ class BaseDownloader:
             Position where to store the downloaded files.
         description_pattern="Downloading to {}",
             Pattern to use for the loading bar description.
-        crash_early: bool = True,
+        crash_early: bool = False,
             Wether if the download should stop at the earliest crash.
         verbose: int = 1
             The level of verbosity.
@@ -281,10 +282,14 @@ class BaseDownloader:
         ----------------------
         Dataframe with report on the operations executed.
         """
-        if not isinstance(urls, list):
+        if isinstance(urls, str):
             urls = [urls]
-        if paths is not None and not isinstance(paths, list):
+        if is_iterable(urls):
+            urls = list(urls)
+        if paths is not None and isinstance(paths, str):
             paths = [paths]
+        if is_iterable(paths):
+            paths = list(paths)
         if isinstance(urls, list) and isinstance(paths, list) and len(urls) != len(paths):
             raise ValueError(
                 "The urls and paths lists must have the same length."
