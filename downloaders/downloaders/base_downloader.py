@@ -67,6 +67,8 @@ class BaseDownloader:
         if isinstance(verbose, bool):
             verbose = int(verbose)
         self._verbose = verbose
+        if self._process_number == 1 and self._verbose == 1:
+            self._verbose = 2
         self._extractor = AutoExtractor(
             cache=self._cache,
             delete_original_after_extraction=delete_original_after_extraction
@@ -293,11 +295,18 @@ class BaseDownloader:
             )
             for i in range(len(urls))
         )
+        desc = "Downloading files"
         # If only one process is required, we don't create a Pool
         if process_number == 1:
             report = pd.DataFrame([
                 self._download_wrapper(task)
-                for task in tasks
+                for task in tqdm(
+                    tasks,
+                    desc=desc,
+                    dynamic_ncols=True,
+                    disable=not self._verbose > 0,
+                    leave=False
+                )
             ])
         else:
             # Start the process pool
@@ -308,7 +317,7 @@ class BaseDownloader:
                         self._download_wrapper,
                         tasks
                     ),
-                    desc="Downloading files",
+                    desc=desc,
                     dynamic_ncols=True,
                     disable=not self._verbose > 0,
                     leave=False
