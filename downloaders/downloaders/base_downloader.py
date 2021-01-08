@@ -304,7 +304,7 @@ class BaseDownloader:
                     tasks,
                     desc=desc,
                     dynamic_ncols=True,
-                    disable=not self._verbose > 0,
+                    disable=not self._verbose > 0 or len(tasks) == 1,
                     leave=False
                 )
             ])
