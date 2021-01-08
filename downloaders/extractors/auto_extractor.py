@@ -12,7 +12,7 @@ class AutoExtractor(BaseExtractor):
     def __init__(
         self,
         cache: bool = True,
-        delete_original_after_extraction: bool = True
+        delete_original_after_extraction: bool = False
     ):
         """Create new file extractor.
 
@@ -20,7 +20,7 @@ class AutoExtractor(BaseExtractor):
         -------------------
         cache: bool = True,
             Wether to skip extraction when file is already available.
-        delete_original_after_extraction: bool = True,
+        delete_original_after_extraction: bool = False,
             Wether to delete the original file after it has been extracted.
         """
         super().__init__(

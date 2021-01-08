@@ -16,7 +16,7 @@ class BaseDownloader:
         process_number: int = -1,
         block_size: int = 32768,
         auto_extract: bool = True,
-        delete_original_after_extraction: bool = True,
+        delete_original_after_extraction: bool = False,
         max_description_size: int = 50,
         cache: bool = True,
         target_directory: str = "downloads",
@@ -35,7 +35,7 @@ class BaseDownloader:
             The dimension of the block size to download in stream.
         auto_extract: bool = True,
             Wether to automatically extract the encountered files.
-        delete_original_after_extraction: bool = True,
+        delete_original_after_extraction: bool = False,
             Wether to delete the downloaded file after extraction.
         max_description_size: int = 50,
             Maximum length of the description in the loading bar.
