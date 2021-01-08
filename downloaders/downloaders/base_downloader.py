@@ -14,7 +14,7 @@ class BaseDownloader:
         self,
         process_number: int = -1,
         block_size: int = 32768,
-        auto_extract: bool = False,
+        auto_extract: bool = True,
         delete_original_after_extraction: bool = True,
         max_description_size: int = 50,
         cache: bool = True,
@@ -32,7 +32,7 @@ class BaseDownloader:
             If the given number is -1, we use all the available processes.
         block_size: int = 32768,
             The dimension of the block size to download in stream.
-        auto_extract: bool = False,
+        auto_extract: bool = True,
             Wether to automatically extract the encountered files.
         delete_original_after_extraction: bool = True,
             Wether to delete the downloaded file after extraction.
