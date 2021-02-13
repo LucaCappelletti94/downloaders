@@ -1,3 +1,4 @@
+from typing import List, Union
 import os
 
 
@@ -6,7 +7,7 @@ class BaseExtractor:
 
     def __init__(
         self,
-        extension: str,
+        extension: Union[str, List[str]],
         cache: bool = True,
         delete_original_after_extraction: bool = True
     ):
@@ -14,14 +15,16 @@ class BaseExtractor:
 
         Parameters
         -------------------
-        extension: str,
+        extension: Union[str, List[str]],
             The base extractor extension.
         cache: bool = True,
             Wether to skip extraction when file is already available.
         delete_original_after_extraction: bool = True,
             Wether to delete the original file after it has been extracted.
         """
-        self._extension = extension
+        if isinstance(extension, str):
+            extension = [extension]
+        self._extensions = extension
         self._cache = cache
         self._delete_original_after_extraction = delete_original_after_extraction
 
@@ -55,8 +58,9 @@ class BaseExtractor:
         """
         # If the file ends with the expected extension we return the updated
         # path.
-        if source.endswith(self._extension):
-            return source[:-len(self._extension)]
+        for ext in self._extensions:
+            if source.endswith(ext):
+                return source[:-len(ext)]
         # Otherwise, we have no clue what path may be optimal, hence we just
         # add the additional extension "extracted".
         return "{}.extracted".format(source)

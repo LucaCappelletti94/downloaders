@@ -21,7 +21,7 @@ class TargzExtractor(BaseExtractor):
             Wether to delete the original file after it has been extracted.
         """
         super().__init__(
-            extension=".tar.gz",
+            extension=[".tar.gz", ".tgz"],
             cache=cache,
             delete_original_after_extraction=delete_original_after_extraction
         )
