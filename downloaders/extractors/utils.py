@@ -3,6 +3,23 @@ import os
 import tarfile
 
 
+def is_bzip2(source: str) -> bool:
+    """Return wether the given file is a bzip2.
+
+    Parameters
+    --------------------
+    source: str,
+        The source path to test if it can be extracted.
+
+    Returns
+    --------------------
+    Boolean value representing if the is a bzip2.
+    """
+    if source.endswith(".bz2"):
+        return True
+    return False
+
+
 def is_gzip(source: str) -> bool:
     """Return wether the given file is a gzip.
 

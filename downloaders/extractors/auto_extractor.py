@@ -4,6 +4,7 @@ from .gzip_extractor import GzipExtractor
 from .targz_extractor import TargzExtractor
 from .xz_extractor import XzExtractor
 from .zip_extraction import ZipExtractor
+from .bz2_extractor import BZ2Extractor
 
 
 class AutoExtractor(BaseExtractor):
@@ -37,7 +38,8 @@ class AutoExtractor(BaseExtractor):
                 GzipExtractor,
                 TargzExtractor,
                 XzExtractor,
-                ZipExtractor
+                ZipExtractor,
+                BZ2Extractor
             )
         ]
 
