@@ -22,7 +22,7 @@ class BaseDownloader:
         target_directory: str = "downloads",
         description_pattern="Downloading to {}",
         crash_early: bool = True,
-        verbose: int = 1
+        verbose: int = 2
     ):
         """Create new BaseDownloader.
 
@@ -47,10 +47,13 @@ class BaseDownloader:
             Pattern to use for the loading bar description.
         crash_early: bool = True,
             Wether if the download should stop at the earliest crash.
-        verbose: int = 1
+        verbose: int = 2
             The level of verbosity.
             With level 1, the overall loading bar is showed.
             With level 2, also the download of each element is showed.
+            Do note that, when using multiprocessing, which is enabled
+            automatically when providing multiple urls to download unless
+            specified otherwise, the inner bar will not be shown.
         """
         if not isinstance(process_number, int) or process_number == 0:
             raise ValueError(
@@ -319,22 +322,31 @@ class BaseDownloader:
                 )
             ])
         else:
+            verbose_backup = self._verbose
+            if self._verbose > 1:
+                self._verbose = 1
             # Start the process pool
             with Pool(process_number) as p:
-                # Execute the downloads and compose the report document.
-                report = pd.DataFrame(tqdm(
-                    p.imap(
-                        self._download_wrapper,
-                        tasks
-                    ),
-                    desc=desc,
-                    dynamic_ncols=True,
-                    disable=not self._verbose > 0,
-                    total=len(urls),
-                    leave=False
-                ))
-                # Clean up the pool
-                p.close()
-                p.join()
+                try:
+                    # Execute the downloads and compose the report document.
+                    report = pd.DataFrame(tqdm(
+                        p.imap(
+                            self._download_wrapper,
+                            tasks
+                        ),
+                        desc=desc,
+                        dynamic_ncols=True,
+                        disable=not self._verbose > 0,
+                        total=len(urls),
+                        leave=False
+                    ))
+                    # Clean up the pool
+                    p.close()
+                    p.join()
+                except (Exception, KeyboardInterrupt):
+                    p.close()
+                    p.join()
+                    self._verbose = verbose_backup
+            self._verbose = verbose_backup
         # Return report
         return report
