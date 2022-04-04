@@ -1,3 +1,4 @@
+import imp
 from typing import Dict
 from .base_extractor import BaseExtractor
 from .gzip_extractor import GzipExtractor
@@ -5,6 +6,7 @@ from .targz_extractor import TargzExtractor
 from .xz_extractor import XzExtractor
 from .zip_extraction import ZipExtractor
 from .bz2_extractor import BZ2Extractor
+from .tar_extractor import TarExtractor
 
 
 class AutoExtractor(BaseExtractor):
@@ -37,6 +39,7 @@ class AutoExtractor(BaseExtractor):
             for extractor in (
                 GzipExtractor,
                 TargzExtractor,
+                TarExtractor,
                 XzExtractor,
                 ZipExtractor,
                 BZ2Extractor

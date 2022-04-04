@@ -81,3 +81,22 @@ def is_targz(source: str) -> bool:
     if not os.path.exists(source):
         return False
     return tarfile.is_tarfile(source) and is_gzip(source)
+
+
+def is_tar(source: str) -> bool:
+    """Return wether the given file is a tar and NOT a targz.
+
+    Parameters
+    --------------------
+    source: str,
+        The source path to test if it can be extracted.
+
+    Returns
+    --------------------
+    Boolean value representing if the file is a tar.
+    """
+    if source.endswith(".tar"):
+        return True
+    if not os.path.exists(source):
+        return False
+    return tarfile.is_tarfile(source) and not is_gzip(source)
