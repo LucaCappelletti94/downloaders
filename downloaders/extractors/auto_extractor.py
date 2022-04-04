@@ -38,11 +38,11 @@ class AutoExtractor(BaseExtractor):
             )
             for extractor in (
                 GzipExtractor,
+                XzExtractor,
+                BZ2Extractor,
                 TargzExtractor,
                 TarExtractor,
-                XzExtractor,
                 ZipExtractor,
-                BZ2Extractor
             )
         ]
 
