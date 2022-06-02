@@ -343,10 +343,11 @@ class BaseDownloader:
                     # Clean up the pool
                     p.close()
                     p.join()
-                except (Exception, KeyboardInterrupt):
+                except (Exception, KeyboardInterrupt) as e:
                     p.close()
                     p.join()
                     self._verbose = verbose_backup
+                    raise e
             self._verbose = verbose_backup
         # Return report
         return report
