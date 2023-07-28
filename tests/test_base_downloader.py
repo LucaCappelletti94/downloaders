@@ -1,9 +1,11 @@
+"""Test module to test the base downloader with several compression algorithms."""
 import os
 from downloaders import BaseDownloader
 import shutil
 
 
 def test_base_downloader():
+    """Test the base downloader with several compression algorithms."""
     root = "tests/downloads"
     urls = [
         "https://github.com/LucaCappelletti94/downloaders/blob/main/tests/data/archive.tar?raw=true",

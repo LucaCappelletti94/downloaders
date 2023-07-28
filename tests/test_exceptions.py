@@ -1,3 +1,4 @@
+"""Test moduke to test exceptions and corner cases."""
 import pytest
 from downloaders import BaseDownloader
 from downloaders.extractors.base_extractor import BaseExtractor

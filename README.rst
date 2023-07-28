@@ -1,7 +1,6 @@
 downloaders
 =========================================================================================
-|travis| |sonar_quality| |sonar_maintainability|
-|code_climate_maintainability| |pip| |downloads|
+|pip| |downloads| |github|
 
 Python package to handle the download of multiple types of files.
 
@@ -24,12 +23,6 @@ Usage examples
     urls = [...]
     downloader.download(urls)
 
-Tests Coverage
-----------------------------------------------
-Since some software handling coverages sometimes
-get slightly different results, here's three of them:
-
-|coveralls| |sonar_coverage| |code_climate_coverage|
 
 Troubleshooting
 -----------------------------------------------
@@ -57,25 +50,6 @@ processes, that is:
 
 The aforementioned solution was proposed on `this StackOverflow question <https://stackoverflow.com/questions/30669659/multiproccesing-and-error-the-process-has-forked-and-you-cannot-use-this-corefou>`__.
 
-.. |travis| image:: https://travis-ci.org/LucaCappelletti94/downloaders.png
-   :target: https://travis-ci.org/LucaCappelletti94/downloaders
-   :alt: Travis CI build
-
-.. |sonar_quality| image:: https://sonarcloud.io/api/project_badges/measure?project=LucaCappelletti94_downloaders&metric=alert_status
-    :target: https://sonarcloud.io/dashboard/index/LucaCappelletti94_downloaders
-    :alt: SonarCloud Quality
-
-.. |sonar_maintainability| image:: https://sonarcloud.io/api/project_badges/measure?project=LucaCappelletti94_downloaders&metric=sqale_rating
-    :target: https://sonarcloud.io/dashboard/index/LucaCappelletti94_downloaders
-    :alt: SonarCloud Maintainability
-
-.. |sonar_coverage| image:: https://sonarcloud.io/api/project_badges/measure?project=LucaCappelletti94_downloaders&metric=coverage
-    :target: https://sonarcloud.io/dashboard/index/LucaCappelletti94_downloaders
-    :alt: SonarCloud Coverage
-
-.. |coveralls| image:: https://coveralls.io/repos/github/LucaCappelletti94/downloaders/badge.svg?branch=master
-    :target: https://coveralls.io/github/LucaCappelletti94/downloaders?branch=master
-    :alt: Coveralls Coverage
 
 .. |pip| image:: https://badge.fury.io/py/downloaders.svg
     :target: https://badge.fury.io/py/downloaders
@@ -85,10 +59,6 @@ The aforementioned solution was proposed on `this StackOverflow question <https:
     :target: https://pepy.tech/project/downloaders
     :alt: Pypi total project downloads
 
-.. |code_climate_maintainability| image:: https://api.codeclimate.com/v1/badges/35fb30e0228dbd2a03cc/maintainability
-    :target: https://codeclimate.com/github/LucaCappelletti94/downloaders/maintainability
-    :alt: Maintainability
-
-.. |code_climate_coverage| image:: https://api.codeclimate.com/v1/badges/35fb30e0228dbd2a03cc/test_coverage
-    :target: https://codeclimate.com/github/LucaCappelletti94/downloaders/test_coverage
-    :alt: Code Climate Coverage
+.. |github| image:: https://github.com/lucacappelletti94/hyperloglog-rs/actions/workflows/python.yml/badge.svg
+    :target: https://github.com/lucacappelletti94/hyperloglog-rs/actions
+    :alt: Github Actions

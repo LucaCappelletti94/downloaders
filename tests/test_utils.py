@@ -1,3 +1,4 @@
+"""Test the utils module."""""
 from glob import glob
 
 from downloaders.extractors.utils import is_gzip, is_targz, is_xz
