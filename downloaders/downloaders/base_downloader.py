@@ -289,6 +289,8 @@ class BaseDownloader:
             urls = [urls]
         if is_iterable(urls):
             urls = list(urls)
+        if not urls:
+            raise ValueError("No URLs given to download")
         if paths is not None and isinstance(paths, str):
             paths = [paths]
         if is_iterable(paths):
