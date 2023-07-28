@@ -1,4 +1,4 @@
-name: Downloaders python package
+name: Test suite
 
 on: [push]
 
