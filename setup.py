@@ -58,6 +58,7 @@ setup(
     # Add here the package dependencies
     install_requires=[
         "tqdm",
+        "requests",
         "pandas"
     ],
     extras_require=extras,
