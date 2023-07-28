@@ -30,10 +30,7 @@ __version__ = find_version("downloaders", "__version__.py")
 
 test_deps = [
     "pytest",
-    "pytest-cov",
-    "coveralls",
     "validate_version_code",
-    "codacy-coverage"
 ]
 
 extras = {
