@@ -221,9 +221,9 @@ class BaseDownloader:
                 if self._auto_extract and self._extractor.can_extract(destination):
                     extration_metadata = self._extractor.extract(
                         destination
-                    )
+                    )[0]
             # If something fails, we remove the failed download.
-            except (Exception, KeyboardInterrupt) as e:
+            except (Exception, KeyboardInterrupt) as process_exception:
                 # If the download has crashed or has been interrupted
                 # we have to remove the partially downloaded file.
                 if os.path.exists(destination):
@@ -231,16 +231,16 @@ class BaseDownloader:
                 # If the bar was created we need to close it down.
                 if bar is not None:
                     bar.close()
-                raise e
-        except KeyboardInterrupt as e:
-            raise e
-        except Exception as e:
+                raise process_exception
+        except KeyboardInterrupt as user_interrupt_exception:
+            raise user_interrupt_exception
+        except Exception as download_crash_exception:
             # If the download has crashed and it is required to crash early
             # we raise the captured exception.
             if self._crash_early:
-                raise e
+                raise download_crash_exception
             else:
-                exception = str(e)
+                exception = str(download_crash_exception)
         # Compose the metadata dictionary.
         return {
             "status_code": status_code,
@@ -252,7 +252,7 @@ class BaseDownloader:
             "cached": cached,
             "exception": exception,
             **{
-                "extraction_{}".format(key): value
+                f"extraction_{key}": value
                 for key, value in extration_metadata.items()
             }
         }

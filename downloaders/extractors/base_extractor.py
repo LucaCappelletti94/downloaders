@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import Dict, Union, List, Optional
 import os
 
 
@@ -117,11 +117,11 @@ class BaseExtractor:
                 self._extract(source, destination)
                 if self._delete_original_after_extraction:
                     os.remove(source)
-            except (Exception, KeyboardInterrupt) as e:
+            except (Exception, KeyboardInterrupt) as extraction_exception:
                 # If the extracted file has been created
                 if os.path.exists(destination):
                     os.remove(destination)
-                raise e
+                raise extraction_exception
             success = True
         else:
             cached = True

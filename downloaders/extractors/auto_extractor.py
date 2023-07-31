@@ -1,5 +1,5 @@
-import imp
-from typing import Dict
+from typing import Dict, Union, List, Optional
+from tqdm.auto import tqdm
 from .base_extractor import BaseExtractor
 from .gzip_extractor import GzipExtractor
 from .targz_extractor import TargzExtractor
@@ -93,23 +93,47 @@ class AutoExtractor(BaseExtractor):
 
     def extract(
         self,
-        source: str,
-        destination: str = None
-    ) -> Dict:
+        source: Union[str, List[str]],
+        destination: Optional[Union[str, List[str]]] = None
+    ) -> List[Dict]:
         """Extract the given source file to the given destination.
 
         Parameters
         -------------------
-        source: str,
+        source: Union[str, List[str]],
             The source file to extract.
-        destination: str = None,
+            If a list is provided, all files will be extracted.
+        destination: Optional[Union[str, List[str]]] = None,
             The destination file to target.
+            If it is not provided, the destination path
+            will be inferred by the provided source paths.
+            If a list is provided, we expect it to have the same length
+            as the source list.
 
         Returns
         -------------------
         Dictionary with metadata.
         """
-        return self.get_supported_extractor(source).extract(
-            source,
-            destination
+        if isinstance(source, str):
+            source = [source]
+        if destination is None:
+            destination = [None] * len(source)
+        elif isinstance(destination, str):
+            destination = [destination]
+        assert len(source) == len(destination), (
+            "The source and destination lists must have the same length, "
+            f"but got {len(source)} and {len(destination)} respectively."
         )
+
+        return [
+            self.get_supported_extractor(src).extract(
+                src,
+                dst
+            )
+            for src, dst in tqdm(
+                zip(source, destination),
+                desc="Extracting files",
+                total=len(source),
+                disable=len(source) == 1
+            )
+        ]
