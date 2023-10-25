@@ -17,9 +17,9 @@ class XzExtractor(BaseExtractor):
         Parameters
         -------------------
         cache: bool = True,
-            Wether to skip extraction when file is already available.
+            Whether to skip extraction when file is already available.
         delete_original_after_extraction: bool = True,
-            Wether to delete the original file after it has been extracted.
+            Whether to delete the original file after it has been extracted.
         """
         super().__init__(
             extension=".xz",
@@ -28,7 +28,7 @@ class XzExtractor(BaseExtractor):
         )
 
     def can_extract(self, source: str) -> bool:
-        """Return wether this extractor can extract or not the given file.
+        """Return Whether this extractor can extract or not the given file.
 
         Parameters
         --------------------

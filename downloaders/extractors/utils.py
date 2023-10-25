@@ -4,7 +4,7 @@ import tarfile
 
 
 def is_bzip2(source: str) -> bool:
-    """Return wether the given file is a bzip2.
+    """Return Whether the given file is a bzip2.
 
     Parameters
     --------------------
@@ -21,7 +21,7 @@ def is_bzip2(source: str) -> bool:
 
 
 def is_gzip(source: str) -> bool:
-    """Return wether the given file is a gzip.
+    """Return Whether the given file is a gzip.
 
     Parameters
     --------------------
@@ -41,7 +41,7 @@ def is_gzip(source: str) -> bool:
 
 
 def is_xz(source: str) -> bool:
-    """Return wether the given file is a xz.
+    """Return Whether the given file is a xz.
 
     Parameters
     --------------------
@@ -65,7 +65,7 @@ def is_xz(source: str) -> bool:
 
 
 def is_targz(source: str) -> bool:
-    """Return wether the given file is a targz.
+    """Return Whether the given file is a targz.
 
     Parameters
     --------------------
@@ -84,7 +84,7 @@ def is_targz(source: str) -> bool:
 
 
 def is_tar(source: str) -> bool:
-    """Return wether the given file is a tar and NOT a targz.
+    """Return Whether the given file is a tar and NOT a targz.
 
     Parameters
     --------------------

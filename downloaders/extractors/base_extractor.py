@@ -1,4 +1,5 @@
-from typing import Dict, Union, List, Optional
+from typing import Union, List
+import shutil
 import os
 
 
@@ -18,9 +19,9 @@ class BaseExtractor:
         extension: Union[str, List[str]],
             The base extractor extension.
         cache: bool = True,
-            Wether to skip extraction when file is already available.
+            Whether to skip extraction when file is already available.
         delete_original_after_extraction: bool = True,
-            Wether to delete the original file after it has been extracted.
+            Whether to delete the original file after it has been extracted.
         """
         if isinstance(extension, str):
             extension = [extension]
@@ -29,7 +30,7 @@ class BaseExtractor:
         self._delete_original_after_extraction = delete_original_after_extraction
 
     def can_extract(self, source: str) -> bool:
-        """Return wether this extractor can extract or not the given file.
+        """Return Whether this extractor can extract or not the given file.
 
         Parameters
         --------------------
@@ -63,7 +64,7 @@ class BaseExtractor:
                 return source[:-len(ext)]
         # Otherwise, we have no clue what path may be optimal, hence we just
         # add the additional extension "extracted".
-        return "{}.extracted".format(source)
+        return "{source}.extracted"
 
     def _extract(self, source: str, destination: str):
         """Extract the given source to the given destination.
@@ -120,7 +121,11 @@ class BaseExtractor:
             except (Exception, KeyboardInterrupt) as extraction_exception:
                 # If the extracted file has been created
                 if os.path.exists(destination):
-                    os.remove(destination)
+                    # if the file is a directory, we remove it recursively.
+                    if os.path.isdir(destination):
+                        shutil.rmtree(destination)
+                    else:
+                        os.remove(destination)
                 raise extraction_exception
             success = True
         else:

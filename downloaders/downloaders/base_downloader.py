@@ -1,9 +1,12 @@
-from typing import Union, List, Dict
+"""Module to handle cleanly download of files."""
+import os
+from multiprocessing import Pool, cpu_count
+from typing import Dict, List, Union
+
+import pandas as pd
 import requests
 from tqdm.auto import tqdm
-from multiprocessing import Pool, cpu_count
-import os
-import pandas as pd
+
 from ..extractors import AutoExtractor
 from ..utils import is_iterable
 
@@ -22,6 +25,7 @@ class BaseDownloader:
         target_directory: str = "downloads",
         description_pattern="Downloading to {}",
         crash_early: bool = True,
+        timeout: int = 60,
         verbose: int = 2
     ):
         """Create new BaseDownloader.
@@ -34,19 +38,21 @@ class BaseDownloader:
         block_size: int = 32768,
             The dimension of the block size to download in stream.
         auto_extract: bool = True,
-            Wether to automatically extract the encountered files.
+            Whether to automatically extract the encountered files.
         delete_original_after_extraction: bool = False,
-            Wether to delete the downloaded file after extraction.
+            Whether to delete the downloaded file after extraction.
         max_description_size: int = 50,
             Maximum length of the description in the loading bar.
         cache: bool = True,
-            Wether to use cache or not.
+            Whether to use cache or not.
         target_directory: str = "downloads",
             Position where to store the downloaded files.
         description_pattern="Downloading to {}",
             Pattern to use for the loading bar description.
         crash_early: bool = True,
-            Wether if the download should stop at the earliest crash.
+            Whether if the download should stop at the earliest crash.
+        timeout: int = 60,
+            Timeout for the requests.
         verbose: int = 2
             The level of verbosity.
             With level 1, the overall loading bar is showed.
@@ -65,6 +71,7 @@ class BaseDownloader:
         self._max_description_size = max_description_size - \
             len(description_pattern)
         self._cache = cache
+        self._timeout = timeout
         self._target_directory = target_directory
         self._description_pattern = description_pattern
         self._crash_early = crash_early
@@ -80,7 +87,6 @@ class BaseDownloader:
 
     def destination_path(self, request: requests.Request, url: str) -> str:
         """Return path to where to store the file."""
-        # TODO: extend this method to be more stable.
         file_name = request.headers.get('content-disposition', None)
         if file_name is None:
             file_name = url.split("/")[-1]
@@ -90,7 +96,7 @@ class BaseDownloader:
             file_name
         )
 
-    def build_loading_bar(self, file_size: int, path: str) -> "TQDM":
+    def build_loading_bar(self, file_size: int, path: str) -> tqdm:
         """Return loading bar.
 
         Parameters
@@ -105,10 +111,7 @@ class BaseDownloader:
         TQDM loading bar.
         """
         if len(path) > self._max_description_size:
-            path = "{}...{}".format(
-                path[:self._max_description_size//2],
-                path[-self._max_description_size//2:]
-            )
+            path = f"{path[:self._max_description_size//2]}...{path[-self._max_description_size//2:]}"
         return tqdm(
             total=file_size,
             unit='iB',
@@ -161,13 +164,13 @@ class BaseDownloader:
                 if destination is None:
                     # If the destination was not given, we try to assign one by using
                     # the request metadata and the url.
-                    request = requests.get(url, stream=True)
+                    request = requests.get(url, stream=True, timeout=self._timeout)
                     destination = self.destination_path(request, url)
                 # If the file is not cached we proceed to the download.
                 if not self.is_cached(destination):
                     # If the request object was not already constructed.
                     if request is None:
-                        request = requests.get(url, stream=True)
+                        request = requests.get(url, stream=True, timeout=self._timeout)
                     # Get the status
                     status_code = request.status_code
                     # Obtain the file size
@@ -190,10 +193,7 @@ class BaseDownloader:
                     # If the request has failed, we remove the file.
                     if status_code != 200:
                         raise ValueError(
-                            "Request to url {url} finished with status code {status}.".format(
-                                url=url,
-                                status=request.status_code
-                            )
+                            f"Request to url {url} finished with status code {request.status_code}."
                         )
                     # If we have reached this point, than the download has
                     # been a success.
