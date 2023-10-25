@@ -64,7 +64,7 @@ class BaseExtractor:
                 return source[:-len(ext)]
         # Otherwise, we have no clue what path may be optimal, hence we just
         # add the additional extension "extracted".
-        return "{source}.extracted"
+        return f"{source}.extracted"
 
     def _extract(self, source: str, destination: str):
         """Extract the given source to the given destination.
