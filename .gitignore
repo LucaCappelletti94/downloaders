@@ -12,3 +12,5 @@ coverage.xml
 .ipynb_checkpoints
 htmlcov
 tests/downloads
+build
+dist

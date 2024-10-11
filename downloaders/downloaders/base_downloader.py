@@ -202,6 +202,9 @@ class BaseDownloader:
                     # If we have reached this point, than the download has
                     # been a success.
                     success = True
+
+                    if self._sleep_time > 0:
+                        sleep(self._sleep_time)
                 else:
                     # If the file is cached we approximate the values by
                     # making some assumptions.
@@ -243,9 +246,6 @@ class BaseDownloader:
                 raise download_crash_exception
             else:
                 exception = str(download_crash_exception)
-
-        if self._sleep_time > 0:
-            sleep(self._sleep_time)
 
         # Compose the metadata dictionary.
         return {
