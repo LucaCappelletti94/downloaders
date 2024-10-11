@@ -1,7 +1,9 @@
 """Module to handle cleanly download of files."""
+
 import os
 from multiprocessing import Pool, cpu_count
 from typing import Dict, List, Union
+from time import sleep
 
 import pandas as pd
 import requests
@@ -26,7 +28,8 @@ class BaseDownloader:
         description_pattern="Downloading to {}",
         crash_early: bool = True,
         timeout: int = 60,
-        verbose: int = 2
+        sleep_time: int = 0,
+        verbose: int = 2,
     ):
         """Create new BaseDownloader.
 
@@ -53,13 +56,15 @@ class BaseDownloader:
             Whether if the download should stop at the earliest crash.
         timeout: int = 60,
             Timeout for the requests.
-        verbose: int = 2
+        sleep_time: int = 0,
+            Time to sleep between requests.
+        verbose: int = 2,
             The level of verbosity.
             With level 1, the overall loading bar is showed.
             With level 2, also the download of each element is showed.
             Do note that, when using multiprocessing, which is enabled
             automatically when providing multiple urls to download unless
-            specified otherwise, the inner bar will not be shown.
+            specified otherwise, the inner bar will not be shown
         """
         if not isinstance(process_number, int) or process_number == 0:
             raise ValueError(
@@ -68,8 +73,7 @@ class BaseDownloader:
         self._process_number = process_number if process_number > 0 else cpu_count()
         self._block_size = block_size
         self._auto_extract = auto_extract
-        self._max_description_size = max_description_size - \
-            len(description_pattern)
+        self._max_description_size = max_description_size - len(description_pattern)
         self._cache = cache
         self._timeout = timeout
         self._target_directory = target_directory
@@ -77,24 +81,22 @@ class BaseDownloader:
         self._crash_early = crash_early
         if isinstance(verbose, bool):
             verbose = int(verbose)
+        self._sleep_time = sleep_time
         self._verbose = verbose
         if self._process_number == 1 and self._verbose == 1:
             self._verbose = 2
         self._extractor = AutoExtractor(
             cache=self._cache,
-            delete_original_after_extraction=delete_original_after_extraction
+            delete_original_after_extraction=delete_original_after_extraction,
         )
 
     def destination_path(self, request: requests.Request, url: str) -> str:
         """Return path to where to store the file."""
-        file_name = request.headers.get('content-disposition', None)
+        file_name = request.headers.get("content-disposition", None)
         if file_name is None:
             file_name = url.split("/")[-1]
             file_name = file_name.split("?")[0]
-        return os.path.join(
-            self._target_directory,
-            file_name
-        )
+        return os.path.join(self._target_directory, file_name)
 
     def build_loading_bar(self, file_size: int, path: str) -> tqdm:
         """Return loading bar.
@@ -114,20 +116,22 @@ class BaseDownloader:
             path = f"{path[:self._max_description_size//2]}...{path[-self._max_description_size//2:]}"
         return tqdm(
             total=file_size,
-            unit='iB',
+            unit="iB",
             unit_scale=True,
             desc=self._description_pattern.format(path),
             dynamic_ncols=True,
             leave=False,
-            disable=not self._verbose > 1
+            disable=not self._verbose > 1,
         )
 
     def is_cached(self, destination: str) -> bool:
         """Return boolean representing if given path is cached."""
         if not self._cache:
             return False
-        return os.path.exists(destination) or self._extractor.can_extract(destination) and self._extractor.is_cached(
-            self._extractor.destination_path(destination)
+        return (
+            os.path.exists(destination)
+            or self._extractor.can_extract(destination)
+            and self._extractor.is_cached(self._extractor.destination_path(destination))
         )
 
     def _download(self, url: str, destination: str = None) -> Dict:
@@ -174,7 +178,7 @@ class BaseDownloader:
                     # Get the status
                     status_code = request.status_code
                     # Obtain the file size
-                    file_size = int(request.headers.get('content-length', 0))
+                    file_size = int(request.headers.get("content-length", 0))
                     # We create the loading bar object.
                     bar = self.build_loading_bar(file_size, destination)
                     # If the directory is not already built we create it.
@@ -219,9 +223,7 @@ class BaseDownloader:
                     # Since it is cached it is definitely a success
                     success = True
                 if self._auto_extract and self._extractor.can_extract(destination):
-                    extration_metadata = self._extractor.extract(
-                        destination
-                    )[0]
+                    extration_metadata = self._extractor.extract(destination)[0]
             # If something fails, we remove the failed download.
             except (Exception, KeyboardInterrupt) as process_exception:
                 # If the download has crashed or has been interrupted
@@ -241,6 +243,10 @@ class BaseDownloader:
                 raise download_crash_exception
             else:
                 exception = str(download_crash_exception)
+
+        if self._sleep_time > 0:
+            sleep(self._sleep_time)
+
         # Compose the metadata dictionary.
         return {
             "status_code": status_code,
@@ -251,10 +257,7 @@ class BaseDownloader:
             "success": success,
             "cached": cached,
             "exception": exception,
-            **{
-                f"extraction_{key}": value
-                for key, value in extration_metadata.items()
-            }
+            **{f"extraction_{key}": value for key, value in extration_metadata.items()},
         }
 
     def _download_wrapper(self, kwargs: Dict) -> Dict:
@@ -295,34 +298,35 @@ class BaseDownloader:
             paths = [paths]
         if is_iterable(paths):
             paths = list(paths)
-        if isinstance(urls, list) and isinstance(paths, list) and len(urls) != len(paths):
-            raise ValueError(
-                "The urls and paths lists must have the same length."
-            )
+        if (
+            isinstance(urls, list)
+            and isinstance(paths, list)
+            and len(urls) != len(paths)
+        ):
+            raise ValueError("The urls and paths lists must have the same length.")
         # Use the minimum amount of processes.
         process_number = min(len(urls), self._process_number)
         # Create the tasks generator
         tasks = (
-            dict(
-                url=urls[i],
-                destination=None if paths is None else paths[i]
-            )
+            dict(url=urls[i], destination=None if paths is None else paths[i])
             for i in range(len(urls))
         )
         desc = "Downloading files"
         # If only one process is required, we don't create a Pool
         if process_number == 1:
-            report = pd.DataFrame([
-                self._download_wrapper(task)
-                for task in tqdm(
-                    tasks,
-                    desc=desc,
-                    dynamic_ncols=True,
-                    disable=not self._verbose > 0 or len(urls) == 1,
-                    total=len(urls),
-                    leave=False
-                )
-            ])
+            report = pd.DataFrame(
+                [
+                    self._download_wrapper(task)
+                    for task in tqdm(
+                        tasks,
+                        desc=desc,
+                        dynamic_ncols=True,
+                        disable=not self._verbose > 0 or len(urls) == 1,
+                        total=len(urls),
+                        leave=False,
+                    )
+                ]
+            )
         else:
             verbose_backup = self._verbose
             if self._verbose > 1:
@@ -331,17 +335,16 @@ class BaseDownloader:
             with Pool(process_number) as p:
                 try:
                     # Execute the downloads and compose the report document.
-                    report = pd.DataFrame(tqdm(
-                        p.imap(
-                            self._download_wrapper,
-                            tasks
-                        ),
-                        desc=desc,
-                        dynamic_ncols=True,
-                        disable=not self._verbose > 0,
-                        total=len(urls),
-                        leave=False
-                    ))
+                    report = pd.DataFrame(
+                        tqdm(
+                            p.imap(self._download_wrapper, tasks),
+                            desc=desc,
+                            dynamic_ncols=True,
+                            disable=not self._verbose > 0,
+                            total=len(urls),
+                            leave=False,
+                        )
+                    )
                     # Clean up the pool
                     p.close()
                     p.join()

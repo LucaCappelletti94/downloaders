@@ -10,7 +10,7 @@ class BaseExtractor:
         self,
         extension: Union[str, List[str]],
         cache: bool = True,
-        delete_original_after_extraction: bool = True
+        delete_original_after_extraction: bool = True,
     ):
         """Create new BaseExtractor object.
 
@@ -61,7 +61,7 @@ class BaseExtractor:
         # path.
         for ext in self._extensions:
             if source.endswith(ext):
-                return source[:-len(ext)]
+                return source[: -len(ext)]
         # Otherwise, we have no clue what path may be optimal, hence we just
         # add the additional extension "extracted".
         return f"{source}.extracted"
@@ -84,11 +84,7 @@ class BaseExtractor:
         """Return boolean representing if given path is cached."""
         return self._cache and os.path.exists(destination)
 
-    def extract(
-        self,
-        source: str,
-        destination: str = None
-    ):
+    def extract(self, source: str, destination: str = None):
         """Extract the given source file to the given destination.
 
         Parameters
@@ -109,10 +105,7 @@ class BaseExtractor:
             directory = os.path.dirname(destination)
             # If the directory is not the current one.
             if directory:
-                os.makedirs(
-                    directory,
-                    exist_ok=True
-                )
+                os.makedirs(directory, exist_ok=True)
             # Try to extract the file, if it fails we delete it.
             try:
                 self._extract(source, destination)

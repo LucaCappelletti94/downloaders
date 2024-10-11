@@ -36,8 +36,8 @@ def is_gzip(source: str) -> bool:
         return True
     if not os.path.exists(source):
         return False
-    with open(source, 'rb') as f:
-        return f.read(2) == b'\x1f\x8b'
+    with open(source, "rb") as f:
+        return f.read(2) == b"\x1f\x8b"
 
 
 def is_xz(source: str) -> bool:
@@ -56,7 +56,7 @@ def is_xz(source: str) -> bool:
         return True
     if not os.path.exists(source):
         return False
-    with lzma.open(source, 'r') as f:
+    with lzma.open(source, "r") as f:
         try:
             f.read(1)
             return True

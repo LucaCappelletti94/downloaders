@@ -6,9 +6,7 @@ class ZipExtractor(BaseExtractor):
     """Extractor for Gzip files."""
 
     def __init__(
-        self,
-        cache: bool = True,
-        delete_original_after_extraction: bool = True
+        self, cache: bool = True, delete_original_after_extraction: bool = True
     ):
         """Create new ZipExtractor object.
 
@@ -22,7 +20,7 @@ class ZipExtractor(BaseExtractor):
         super().__init__(
             extension=".zip",
             cache=cache,
-            delete_original_after_extraction=delete_original_after_extraction
+            delete_original_after_extraction=delete_original_after_extraction,
         )
 
     def can_extract(self, source: str) -> bool:
@@ -49,5 +47,5 @@ class ZipExtractor(BaseExtractor):
         destination: str,
             The target destination.
         """
-        with zipfile.ZipFile(source, 'r') as zip_ref:
+        with zipfile.ZipFile(source, "r") as zip_ref:
             zip_ref.extractall(destination)

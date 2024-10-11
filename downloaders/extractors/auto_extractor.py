@@ -13,9 +13,7 @@ class AutoExtractor(BaseExtractor):
     """Class to automatically extract files."""
 
     def __init__(
-        self,
-        cache: bool = True,
-        delete_original_after_extraction: bool = False
+        self, cache: bool = True, delete_original_after_extraction: bool = False
     ):
         """Create new file extractor.
 
@@ -29,12 +27,12 @@ class AutoExtractor(BaseExtractor):
         super().__init__(
             None,
             cache=cache,
-            delete_original_after_extraction=delete_original_after_extraction
+            delete_original_after_extraction=delete_original_after_extraction,
         )
         self._extractors = [
             extractor(
                 cache=cache,
-                delete_original_after_extraction=delete_original_after_extraction
+                delete_original_after_extraction=delete_original_after_extraction,
             )
             for extractor in (
                 GzipExtractor,
@@ -94,7 +92,7 @@ class AutoExtractor(BaseExtractor):
     def extract(
         self,
         source: Union[str, List[str]],
-        destination: Optional[Union[str, List[str]]] = None
+        destination: Optional[Union[str, List[str]]] = None,
     ) -> List[Dict]:
         """Extract the given source file to the given destination.
 
@@ -126,14 +124,11 @@ class AutoExtractor(BaseExtractor):
         )
 
         return [
-            self.get_supported_extractor(src).extract(
-                src,
-                dst
-            )
+            self.get_supported_extractor(src).extract(src, dst)
             for src, dst in tqdm(
                 zip(source, destination),
                 desc="Extracting files",
                 total=len(source),
-                disable=len(source) == 1
+                disable=len(source) == 1,
             )
         ]

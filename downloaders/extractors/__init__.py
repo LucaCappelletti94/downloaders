@@ -2,6 +2,4 @@
 from .auto_extractor import AutoExtractor
 
 
-__all__ = [
-    "AutoExtractor"
-]
+__all__ = ["AutoExtractor"]

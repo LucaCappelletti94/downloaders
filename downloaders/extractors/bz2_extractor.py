@@ -9,9 +9,7 @@ class BZ2Extractor(BaseExtractor):
     """Extractor for Gzip files."""
 
     def __init__(
-        self,
-        cache: bool = True,
-        delete_original_after_extraction: bool = True
+        self, cache: bool = True, delete_original_after_extraction: bool = True
     ):
         """Create new GzipExtractor object.
 
@@ -25,7 +23,7 @@ class BZ2Extractor(BaseExtractor):
         super().__init__(
             extension=".bz2",
             cache=cache,
-            delete_original_after_extraction=delete_original_after_extraction
+            delete_original_after_extraction=delete_original_after_extraction,
         )
 
     def can_extract(self, source: str) -> bool:
@@ -52,6 +50,6 @@ class BZ2Extractor(BaseExtractor):
         destination: str,
             The target destination.
         """
-        with bz2.open(source, 'rb') as f_in:
-            with open(destination, 'wb') as f_out:
+        with bz2.open(source, "rb") as f_in:
+            with open(destination, "wb") as f_out:
                 shutil.copyfileobj(f_in, f_out)

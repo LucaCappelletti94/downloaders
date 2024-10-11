@@ -24,11 +24,11 @@ def test_base_downloader():
                 auto_extract=auto_extract,
                 target_directory=root,
                 verbose=True,
-                cache=cache
+                cache=cache,
             )
             downloader.download(urls)
             downloader.download(urls)
             downloader.download(urls[0])
             downloader.download(urls[0], os.path.join(root, "archive.tar"))
-            #if os.path.exists(root):
+            # if os.path.exists(root):
             #    shutil.rmtree(root)
