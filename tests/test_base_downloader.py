@@ -1,7 +1,7 @@
 """Test module to test the base downloader with several compression algorithms."""
 import os
-from downloaders import BaseDownloader
 import shutil
+from downloaders import BaseDownloader
 
 
 def test_base_downloader():

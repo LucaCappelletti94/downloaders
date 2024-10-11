@@ -1,6 +1,7 @@
-import lzma
+"""Utility functions for extractors."""
 import os
 import tarfile
+import lzma
 
 
 def is_bzip2(source: str) -> bool:
@@ -60,7 +61,7 @@ def is_xz(source: str) -> bool:
         try:
             f.read(1)
             return True
-        except lzma.LZMAError:
+        except (lzma.LZMAError, EOFError):
             return False
 
 
