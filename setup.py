@@ -9,7 +9,7 @@ from setuptools import find_packages, setup
 here = os.path.abspath(os.path.dirname(__file__))
 
 # Get the long description from the relevant file
-with copen(os.path.join(here, 'README.md'), encoding='utf-8') as f:
+with copen(os.path.join(here, "README.md"), encoding="utf-8") as f:
     long_description = f.read()
 
 
@@ -44,16 +44,16 @@ setup(
     version=__version__,
     description="Python package to handle download of multiple types of files.",
     long_description=long_description,
-    long_description_content_type='text/markdown',
+    long_description_content_type="text/markdown",
     url="https://github.com/LucaCappelletti94/downloaders",
     author="LucaCappelletti94",
     author_email="cappelletti.luca94@gmail.com",
-    license='MIT',
+    license="MIT",
     include_package_data=True,
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
-        'License :: OSI Approved :: MIT License',
-        'Programming Language :: Python :: 3'
+        "Development Status :: 5 - Production/Stable",
+        "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 3",
     ],
     packages=find_packages(exclude=["contrib", "docs", "tests*"]),
     tests_require=test_deps,
