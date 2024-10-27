@@ -1,4 +1,5 @@
 """Test module to test the base downloader with a zip file case."""
+
 from downloaders import BaseDownloader
 
 
