@@ -1,3 +1,5 @@
+"""Setup for the downloaders package."""
+
 import os
 import re
 
@@ -32,6 +34,7 @@ test_deps = [
     "pytest",
     "types-tqdm",
     "types-requests",
+    "pandas-stubs",
     "validate_version_code",
 ]
 
