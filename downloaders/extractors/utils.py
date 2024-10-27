@@ -1,4 +1,5 @@
 """Utility functions for extractors."""
+
 import os
 import tarfile
 import lzma

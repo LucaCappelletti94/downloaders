@@ -1,3 +1,5 @@
+"""This module contains the ZipExtractor class."""
+
 import zipfile
 from .base_extractor import BaseExtractor
 

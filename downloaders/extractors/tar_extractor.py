@@ -55,7 +55,6 @@ class TarExtractor(BaseExtractor):
         """
         with tarfile.open(source, "r") as tar:
 
-
             def is_within_directory(directory, target):
 
                 abs_directory = os.path.abspath(directory)

@@ -1,3 +1,5 @@
+"""Module for TargzExtractor class."""
+
 import os
 import tarfile
 from .base_extractor import BaseExtractor
@@ -51,7 +53,6 @@ class TargzExtractor(BaseExtractor):
         """
         with tarfile.open(source, "r:gz") as tar:
 
-
             def is_within_directory(directory, target):
 
                 abs_directory = os.path.abspath(directory)
@@ -65,7 +66,7 @@ class TargzExtractor(BaseExtractor):
                 for member in tar.getmembers():
                     member_path = os.path.join(path, member.name)
                     if not is_within_directory(path, member_path):
-                        raise Exception("Attempted Path Traversal in Tar File")
+                        raise RuntimeError("Attempted Path Traversal in Tar File")
 
                 tar.extractall(path, members, numeric_owner=numeric_owner)
 

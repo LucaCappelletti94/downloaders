@@ -1,4 +1,5 @@
-import tarfile
+"""This module contains the BZ2Extractor class."""
+
 import bz2
 import shutil
 from .base_extractor import BaseExtractor

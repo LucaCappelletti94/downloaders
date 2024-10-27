@@ -243,7 +243,7 @@ class BaseDownloader:
         except KeyboardInterrupt as user_interrupt_exception:
             raise user_interrupt_exception
         except (
-            Exception   # pylint: disable=broad-exception-caught
+            Exception  # pylint: disable=broad-exception-caught
         ) as download_crash_exception:
             # If the download has crashed and it is required to crash early
             # we raise the captured exception.

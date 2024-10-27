@@ -1,4 +1,5 @@
-import tarfile
+"""Module for GzipExtractor class."""
+
 import gzip
 import shutil
 from .base_extractor import BaseExtractor

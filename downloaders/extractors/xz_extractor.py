@@ -1,3 +1,5 @@
+"""This module provides the XzExtractor class for extracting XZ files."""
+
 import lzma
 import shutil
 from .base_extractor import BaseExtractor
