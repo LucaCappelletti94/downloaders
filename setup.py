@@ -53,6 +53,8 @@ setup(
     author_email="cappelletti.luca94@gmail.com",
     license="MIT",
     include_package_data=True,
+    # Must have at least python 3.8
+    python_requires=">=3.8",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "License :: OSI Approved :: MIT License",
