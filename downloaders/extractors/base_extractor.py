@@ -1,14 +1,17 @@
-from typing import Union, List
+"""Base class for extracting a compress file."""
+
+from typing import Union, List, Optional
+from abc import ABC, abstractmethod
 import shutil
 import os
 
 
-class BaseExtractor:
+class BaseExtractor(ABC):
     """Base class for extracting a compress file."""
 
     def __init__(
         self,
-        extension: Union[str, List[str]],
+        extension: Optional[Union[str, List[str]]],
         cache: bool = True,
         delete_original_after_extraction: bool = True,
     ):
@@ -29,6 +32,7 @@ class BaseExtractor:
         self._cache = cache
         self._delete_original_after_extraction = delete_original_after_extraction
 
+    @abstractmethod
     def can_extract(self, source: str) -> bool:
         """Return Whether this extractor can extract or not the given file.
 
@@ -59,13 +63,15 @@ class BaseExtractor:
         """
         # If the file ends with the expected extension we return the updated
         # path.
-        for ext in self._extensions:
-            if source.endswith(ext):
-                return source[: -len(ext)]
+        if self._extensions is not None:
+            for ext in self._extensions:
+                if source.endswith(ext):
+                    return source[: -len(ext)]
         # Otherwise, we have no clue what path may be optimal, hence we just
         # add the additional extension "extracted".
         return f"{source}.extracted"
 
+    @abstractmethod
     def _extract(self, source: str, destination: str):
         """Extract the given source to the given destination.
 
@@ -84,7 +90,7 @@ class BaseExtractor:
         """Return boolean representing if given path is cached."""
         return self._cache and os.path.exists(destination)
 
-    def extract(self, source: str, destination: str = None):
+    def extract(self, source: str, destination: Optional[str] = None):
         """Extract the given source file to the given destination.
 
         Parameters

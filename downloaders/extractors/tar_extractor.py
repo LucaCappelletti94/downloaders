@@ -1,4 +1,6 @@
 """Submodule providing operator for extracting Tar files."""
+
+import os
 import tarfile
 from .base_extractor import BaseExtractor
 from .utils import is_tar
@@ -52,9 +54,10 @@ class TarExtractor(BaseExtractor):
             The target destination.
         """
         with tarfile.open(source, "r") as tar:
-            import os
+
 
             def is_within_directory(directory, target):
+
                 abs_directory = os.path.abspath(directory)
                 abs_target = os.path.abspath(target)
 
@@ -66,7 +69,7 @@ class TarExtractor(BaseExtractor):
                 for member in tar.getmembers():
                     member_path = os.path.join(path, member.name)
                     if not is_within_directory(path, member_path):
-                        raise Exception("Attempted Path Traversal in Tar File")
+                        raise RuntimeError("Attempted Path Traversal in Tar File")
 
                 tar.extractall(path, members, numeric_owner=numeric_owner)
 

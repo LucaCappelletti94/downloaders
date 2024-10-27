@@ -1,12 +1,14 @@
+"""Module to automatically extract files."""
+
 from typing import Dict, Union, List, Optional
 from tqdm.auto import tqdm
-from .base_extractor import BaseExtractor
-from .gzip_extractor import GzipExtractor
-from .targz_extractor import TargzExtractor
-from .xz_extractor import XzExtractor
-from .zip_extraction import ZipExtractor
-from .bz2_extractor import BZ2Extractor
-from .tar_extractor import TarExtractor
+from downloaders.extractors.base_extractor import BaseExtractor
+from downloaders.extractors.gzip_extractor import GzipExtractor
+from downloaders.extractors.targz_extractor import TargzExtractor
+from downloaders.extractors.xz_extractor import XzExtractor
+from downloaders.extractors.zip_extraction import ZipExtractor
+from downloaders.extractors.bz2_extractor import BZ2Extractor
+from downloaders.extractors.tar_extractor import TarExtractor
 
 
 class AutoExtractor(BaseExtractor):
@@ -25,7 +27,7 @@ class AutoExtractor(BaseExtractor):
             Whether to delete the original file after it has been extracted.
         """
         super().__init__(
-            None,
+            extension=None,
             cache=cache,
             delete_original_after_extraction=delete_original_after_extraction,
         )
@@ -44,7 +46,7 @@ class AutoExtractor(BaseExtractor):
             )
         ]
 
-    def get_supported_extractor(self, source: str) -> BaseExtractor:
+    def get_supported_extractor(self, source: str) -> Optional[BaseExtractor]:
         """Return supported extractor if it exists.
 
         Parameters
@@ -73,7 +75,11 @@ class AutoExtractor(BaseExtractor):
         ----------------------
         The extracted path
         """
-        return self.get_supported_extractor(source).destination_path(source)
+        extractor = self.get_supported_extractor(source)
+        if extractor is None:
+            raise ValueError(f"Cannot extract {source}")
+
+        return extractor.destination_path(source)
 
     def can_extract(self, source: str) -> bool:
         """Return Whether this extractor can extract or not the given file.
@@ -89,10 +95,24 @@ class AutoExtractor(BaseExtractor):
         """
         return self.get_supported_extractor(source) is not None
 
+    def _extract(self, source: str, destination: str):
+        """Extract the given source to the given destination.
+
+        Parameters
+        ------------------
+        source: str,
+            The source file.
+        destination: str,
+            The target destination.
+        """
+        raise NotImplementedError(
+            "The method _extract should not be called in the AutoExtractor."
+        )
+
     def extract(
         self,
         source: Union[str, List[str]],
-        destination: Optional[Union[str, List[str]]] = None,
+        destination: Optional[Union[Optional[str], List[Optional[str]]]] = None,
     ) -> List[Dict]:
         """Extract the given source file to the given destination.
 
@@ -123,12 +143,16 @@ class AutoExtractor(BaseExtractor):
             f"but got {len(source)} and {len(destination)} respectively."
         )
 
-        return [
-            self.get_supported_extractor(src).extract(src, dst)
-            for src, dst in tqdm(
-                zip(source, destination),
-                desc="Extracting files",
-                total=len(source),
-                disable=len(source) == 1,
-            )
-        ]
+        results = []
+        for src, dst in tqdm(
+            zip(source, destination),
+            desc="Extracting files",
+            total=len(source),
+            disable=len(source) == 1,
+        ):
+            extractor = self.get_supported_extractor(src)
+            if extractor is None:
+                raise ValueError(f"Cannot extract {src}")
+            results.append(extractor.extract(src, dst))
+
+        return results

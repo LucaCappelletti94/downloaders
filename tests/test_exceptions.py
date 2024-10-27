@@ -1,7 +1,6 @@
 """Test moduke to test exceptions and corner cases."""
 import pytest
 from downloaders import BaseDownloader
-from downloaders.extractors.base_extractor import BaseExtractor
 
 
 def test_exceptions():
@@ -17,7 +16,3 @@ def test_exceptions():
         downloader.download(
             "https://github.com/LucaCappelletti94/downloaders/blob/main/tests/data/not_existing.tar?raw=true",
         )
-    with pytest.raises(NotImplementedError):
-        BaseExtractor(None).can_extract("kebab")
-    with pytest.raises(NotImplementedError):
-        BaseExtractor(None)._extract(None, None)

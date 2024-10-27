@@ -1,3 +1,4 @@
+import os
 import tarfile
 from .base_extractor import BaseExtractor
 from .utils import is_targz
@@ -49,9 +50,10 @@ class TargzExtractor(BaseExtractor):
             The target destination.
         """
         with tarfile.open(source, "r:gz") as tar:
-            import os
+
 
             def is_within_directory(directory, target):
+
                 abs_directory = os.path.abspath(directory)
                 abs_target = os.path.abspath(target)
 

@@ -13,4 +13,5 @@ coverage.xml
 htmlcov
 tests/downloads
 build
+.mypy_cache
 dist

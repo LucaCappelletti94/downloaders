@@ -2,11 +2,12 @@
 
 import os
 from multiprocessing import Pool, cpu_count
-from typing import Dict, List, Union
 from time import sleep
+from typing import Dict, List, Union, Optional
 
 import pandas as pd
 import requests
+from requests.models import Response
 from tqdm.auto import tqdm
 
 from ..extractors import AutoExtractor
@@ -90,9 +91,9 @@ class BaseDownloader:
             delete_original_after_extraction=delete_original_after_extraction,
         )
 
-    def destination_path(self, request: requests.Request, url: str) -> str:
+    def destination_path(self, response: Response, url: str) -> str:
         """Return path to where to store the file."""
-        file_name = request.headers.get("content-disposition", None)
+        file_name = response.headers.get("content-disposition", None)
         if file_name is None:
             file_name = url.split("/")[-1]
             file_name = file_name.split("?")[0]
@@ -113,7 +114,9 @@ class BaseDownloader:
         TQDM loading bar.
         """
         if len(path) > self._max_description_size:
-            path = f"{path[:self._max_description_size//2]}...{path[-self._max_description_size//2:]}"
+            first_part_path = path[: self._max_description_size // 2]
+            last_part_path = path[-self._max_description_size // 2 :]
+            path = f"{first_part_path}...{last_part_path}"
         return tqdm(
             total=file_size,
             unit="iB",
@@ -134,7 +137,7 @@ class BaseDownloader:
             and self._extractor.is_cached(self._extractor.destination_path(destination))
         )
 
-    def _download(self, url: str, destination: str = None) -> Dict:
+    def _download(self, url: str, destination: Optional[str] = None) -> Dict:
         """Download file at given url showing a loading bar.
 
         Parameters
@@ -156,11 +159,11 @@ class BaseDownloader:
         """
         status_code = None
         file_size = None
-        bar = None
+        loading_bar = None
         success = False
         cached = False
         exception = ""
-        downloaded_file_size = 0
+        downloaded_file_size: int = 0
         extration_metadata = {}
         try:
             try:
@@ -168,8 +171,10 @@ class BaseDownloader:
                 if destination is None:
                     # If the destination was not given, we try to assign one by using
                     # the request metadata and the url.
-                    request = requests.get(url, stream=True, timeout=self._timeout)
-                    destination = self.destination_path(request, url)
+                    response: Response = requests.get(
+                        url, stream=True, timeout=self._timeout
+                    )
+                    destination = self.destination_path(response, url)
                 # If the file is not cached we proceed to the download.
                 if not self.is_cached(destination):
                     # If the request object was not already constructed.
@@ -180,7 +185,7 @@ class BaseDownloader:
                     # Obtain the file size
                     file_size = int(request.headers.get("content-length", 0))
                     # We create the loading bar object.
-                    bar = self.build_loading_bar(file_size, destination)
+                    loading_bar = self.build_loading_bar(file_size, destination)
                     # If the directory is not already built we create it.
                     directory = os.path.dirname(os.path.abspath(destination))
                     if directory:
@@ -190,10 +195,10 @@ class BaseDownloader:
                     with open(destination, "wb") as f:
                         for data in request.iter_content(self._block_size):
                             data_block = len(data)
-                            bar.update(data_block)
+                            loading_bar.update(data_block)
                             downloaded_file_size += data_block
                             f.write(data)
-                    bar.close()
+                    loading_bar.close()
                     # If the request has failed, we remove the file.
                     if status_code != 200:
                         raise ValueError(
@@ -218,9 +223,7 @@ class BaseDownloader:
                     # If that is the case, we leave it to None.
                     if os.path.exists(destination):
                         file_size = os.path.getsize(destination)
-                    # The downloaded file size, if the download has not failed,
-                    # must have the size of the downloaded file.
-                    downloaded_file_size = file_size
+                        downloaded_file_size = os.path.getsize(destination)
                     # The file has been loaded from the cache.
                     cached = True
                     # Since it is cached it is definitely a success
@@ -231,15 +234,17 @@ class BaseDownloader:
             except (Exception, KeyboardInterrupt) as process_exception:
                 # If the download has crashed or has been interrupted
                 # we have to remove the partially downloaded file.
-                if os.path.exists(destination):
+                if destination is not None and os.path.exists(destination):
                     os.remove(destination)
                 # If the bar was created we need to close it down.
-                if bar is not None:
-                    bar.close()
+                if loading_bar is not None:
+                    loading_bar.close()
                 raise process_exception
         except KeyboardInterrupt as user_interrupt_exception:
             raise user_interrupt_exception
-        except Exception as download_crash_exception:
+        except (
+            Exception   # pylint: disable=broad-exception-caught
+        ) as download_crash_exception:
             # If the download has crashed and it is required to crash early
             # we raise the captured exception.
             if self._crash_early:
@@ -267,7 +272,7 @@ class BaseDownloader:
     def download(
         self,
         urls: Union[str, List[str]],
-        paths: Union[str, List[str]] = None,
+        paths: Optional[Union[str, List[str]]] = None,
     ) -> pd.DataFrame:
         """Download file at given url showing a loading bar.
 
@@ -296,7 +301,7 @@ class BaseDownloader:
             raise ValueError("No URLs given to download")
         if paths is not None and isinstance(paths, str):
             paths = [paths]
-        if is_iterable(paths):
+        if paths is not None and is_iterable(paths):
             paths = list(paths)
         if (
             isinstance(urls, list)
